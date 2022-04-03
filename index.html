@@ -64,6 +64,10 @@
           background-color: #333;
         }
 
+        body.red: {
+          background-color: #b00000;
+        }
+
         body {
           display: -ms-flexbox;
           display: flex;
@@ -213,18 +217,20 @@
                     inputImage=inputImage.resizeBilinear([224,224]).reshape([1,224,224,3])
                     result=mask_model.predict(inputImage).dataSync()
                     result= Array.from(result)
-                    // result = [0.5, 0.8]
+                    
                     ctx.beginPath()
                     if (result[1]>result[0]){
                         //no mask on
                         ctx.strokeStyle="red"
                         ctx.fillStyle = "red";
                         text = "No Mask: "+(result[1]*100).toPrecision(3).toString()+"%";
+                        $("body").addClass('red');
                     }else{
                         //mask on
                         ctx.strokeStyle="green"
                         ctx.fillStyle = "green";
                         text = "Mask: "+(result[0]*100).toPrecision(3).toString()+"%";
+                        $("body").removeClass('red');
                     }
                     ctx.lineWidth = "4"
                     ctx.rect(start[0], start[1],size[0], size[1])
