@@ -74,7 +74,8 @@
                 inputImage=inputImage.slice([parseInt(start[1]),parseInt(start[0]),0],[parseInt(size[1]),parseInt(size[0]),3])
                 inputImage=inputImage.resizeBilinear([224,224]).reshape([1,224,224,3])
                 result=mask_model.predict(inputImage).dataSync()
-                result= Array.from(result)
+                //result= Array.from(result)
+                result = [0.5, 0.8]
                 ctx.beginPath()
                 if (result[1]>result[0]){
                     //no mask on
@@ -117,7 +118,7 @@
 
         model = await blazeface.load();
         
-        mask_model = await tf.loadLayersModel('../models/model.json');
+        mask_model = await tf.loadLayersModel('./models/model.json');
 
        renderPrediction();
     };
