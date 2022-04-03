@@ -24,7 +24,7 @@
     
 
     <div class="container ">
-        <div class="row bg-light" style="height:680px">
+        <div class="row bg-light" style="height:480px">
             <video id="video" playsinline class="border " style="margin:auto;display:inline-block;"></video>
             <canvas id="output" class="canvas-output" style="margin:auto;position:relative;top:-480px;left:10px"></canvas>
         </div> 
@@ -117,7 +117,7 @@
 
         model = await blazeface.load();
         
-        mask_model = await tf.loadLayersModel('models/model.json');
+        mask_model = await tf.loadLayersModel('../models/model.json');
 
        renderPrediction();
     };
