@@ -227,13 +227,13 @@
                         //no mask on
                         ctx.strokeStyle="red"
                         ctx.fillStyle = "red";
-                        text = "No Mask: "+(result[1]*100).toPrecision(3).toString()+"%";
+                        text = "Pas de Masque: "+(result[1]*100).toPrecision(3).toString()+"%";
                         $("body").addClass('red');
                     }else{
                         //mask on
                         ctx.strokeStyle="green"
                         ctx.fillStyle = "green";
-                        text = "Mask: "+(result[0]*100).toPrecision(3).toString()+"%";
+                        text = "Masque: "+(result[0]*100).toPrecision(3).toString()+"%";
                         $("body").removeClass('red');
                     }
                     ctx.lineWidth = "4"
