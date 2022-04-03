@@ -118,7 +118,7 @@
 
         model = await blazeface.load();
         
-        mask_model = await tf.loadLayersModel('../cnn/model.json');
+        mask_model = await tf.loadLayersModel('./models/model.json');
 
        renderPrediction();
     };
