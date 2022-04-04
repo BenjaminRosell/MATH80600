@@ -221,6 +221,7 @@
                     inputImage=inputImage.resizeBilinear([256,256]).reshape([1,256,256,3])
                     result=mask_model.predict(inputImage).dataSync()
                     result= Array.from(result)
+                    console.log(result)
                     
                     ctx.beginPath()
                     if (result[1]>result[0]){
