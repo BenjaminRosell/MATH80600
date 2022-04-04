@@ -1,0 +1,280 @@
+<!doctype html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
+    <meta name="generator" content="Hugo 0.88.1">
+    <title>Détection de masque · MATH80600  · HEC Montréal</title>
+
+    <link rel="canonical" href="https://getbootstrap.com/docs/4.6/examples/cover/">
+    <meta name="theme-color" content="#563d7c">
+
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/blazeface"></script>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css" integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
+</head>
+<style>
+      .bd-placeholder-img {
+        font-size: 1.125rem;
+        text-anchor: middle;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
+        user-select: none;
+      }
+
+      @media (min-width: 768px) {
+        .bd-placeholder-img-lg {
+          font-size: 3.5rem;
+        }
+      }
+
+      /*
+         * Globals
+         */
+
+        /* Links */
+        a,
+        a:focus,
+        a:hover {
+          color: #fff;
+        }
+
+        /* Custom default button */
+        .btn-secondary,
+        .btn-secondary:hover,
+        .btn-secondary:focus {
+          color: #333;
+          text-shadow: none; /* Prevent inheritance from `body` */
+          background-color: #fff;
+          border: .05rem solid #fff;
+        }
+
+
+        /*
+         * Base structure
+         */
+
+        html,
+        body {
+          height: 100%;
+          background-color: #333;
+          -webkit-transition: all 0.5s ease;
+          -moz-transition: all 0.5s ease;
+          -o-transition: all 0.5s ease;
+          transition: all 0.5s ease;
+        }
+
+        body.red {
+          background-color: #b00000 !important;
+        }
+
+        body {
+          display: -ms-flexbox;
+          display: flex;
+          color: #fff;
+          text-shadow: 0 .05rem .1rem rgba(0, 0, 0, .5);
+          box-shadow: inset 0 0 5rem rgba(0, 0, 0, .5);
+        }
+
+        .cover-container {
+          max-width: 42em;
+        }
+
+
+        /*
+         * Header
+         */
+        .masthead {
+          margin-bottom: 2rem;
+        }
+
+        .masthead-brand {
+          margin-bottom: 0;
+        }
+
+        .nav-masthead .nav-link {
+          padding: .25rem 0;
+          font-weight: 700;
+          color: rgba(255, 255, 255, .5);
+          background-color: transparent;
+          border-bottom: .25rem solid transparent;
+        }
+
+        .nav-masthead .nav-link:hover,
+        .nav-masthead .nav-link:focus {
+          border-bottom-color: rgba(255, 255, 255, .25);
+        }
+
+        .nav-masthead .nav-link + .nav-link {
+          margin-left: 1rem;
+        }
+
+        .nav-masthead .active {
+          color: #fff;
+          border-bottom-color: #fff;
+        }
+
+        @media (min-width: 48em) {
+          .masthead-brand {
+            float: left;
+          }
+          .nav-masthead {
+            float: right;
+          }
+        }
+
+
+        /*
+         * Cover
+         */
+        .cover {
+          padding: 0 1.5rem;
+        }
+        .cover .btn-lg {
+          padding: .75rem 1.25rem;
+          font-weight: 700;
+        }
+
+
+        /*
+         * Footer
+         */
+        .mastfoot {
+          color: rgba(255, 255, 255, .5);
+        }
+</style>
+  <body class="text-center">
+    <div class="cover-container d-flex w-100 h-100 p-3 mx-auto flex-column">
+      <header class="masthead mb-auto">
+<!--         <div class="inner">
+          <h3 class="masthead-brand">Cover</h3>
+          <nav class="nav nav-masthead justify-content-center">
+            <a class="nav-link active" href="#">Home</a>
+            <a class="nav-link" href="#">Features</a>
+            <a class="nav-link" href="#">Contact</a>
+          </nav>
+        </div> -->
+      </header>
+
+      <main role="main" class="inner cover">
+        <h1 class="cover-heading">Détection de masque</h1>
+        <br>
+        <div class="row" style="height:480px">
+            <video id="video" playsinline class="border " style="margin:auto;display:inline-block;"></video>
+            <canvas id="output" class="canvas-output" style="margin:auto;position:relative;top:-480px;left:10px"></canvas>
+        </div> 
+      </main>
+
+      <footer class="mastfoot mt-auto">
+        <div class="inner">
+          <p>Réalisé par <a href="mailto:benjamin.rosell@gmail.com">Benjamin Gonzalez</a>, <a href="mailto:fils-harry.michel@hec.ca">Fils-Harry Michel</a> et <a href="mailto:antoine.giroux@hec.ca">Antoine Giroux</a>.</p>
+        </div>
+      </footer>
+    </div>    
+    </body>
+    <script>
+        //Coded by oh yicong, visit my youtube channel for more programming tutorials :)
+        var model, mask_model, ctx, videoWidth, videoHeight, canvas;
+        const video = document.getElementById('video');
+        const state = {
+          backend: 'webgl'
+        };
+        async function setupCamera() {
+            const stream = await navigator.mediaDevices.getUserMedia({
+                'audio': false,
+                'video': { facingMode: 'user' },
+            });
+            video.srcObject = stream;
+            return new Promise((resolve) => {
+                video.onloadedmetadata = () => {
+                  resolve(video);
+                };
+            });
+        }
+
+        const renderPrediction = async () => {
+            tf.engine().startScope()
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            //estimatefaces model takes in 4 parameter (1) video, returnTensors, flipHorizontal, and annotateBoxes
+            const predictions = await model.estimateFaces(video, true,false,false);
+            const offset = tf.scalar(127.5);
+            //check if prediction length is more than 0
+            if (predictions.length > 0) {
+                //clear context
+                
+                for (let i = 0; i < predictions.length; i++) {
+                    var text=""
+                    var start = predictions[i].topLeft.arraySync();
+                    var end = predictions[i].bottomRight.arraySync();
+                    var size = [end[0] - start[0], end[1] - start[1]];
+                    if(videoWidth<end[0] && videoHeight<end[0]){
+                        console.log("image out of frame")
+                        continue
+                    }
+                    var inputImage = tf.browser.fromPixels(video).toFloat()
+                    inputImage = inputImage.sub(offset).div(offset);
+                    inputImage=inputImage.slice([parseInt(start[1]),parseInt(start[0]),0],[parseInt(size[1]),parseInt(size[0]),3])
+                    inputImage=inputImage.resizeBilinear([224,224]).reshape([1,224,224,3])
+                    result=mask_model.predict(inputImage).dataSync()
+                    result= Array.from(result)
+                    console.log(result)
+                    
+                    ctx.beginPath()
+                    if (result[1]>result[0]){
+                        //no mask on
+                        ctx.strokeStyle="red"
+                        ctx.fillStyle = "red";
+                        text = "Pas de Masque: "+(result[1]*100).toPrecision(3).toString()+"%";
+                        $("body").addClass('red');
+                    }else{
+                        //mask on
+                        ctx.strokeStyle="green"
+                        ctx.fillStyle = "green";
+                        text = "Masque: "+(result[0]*100).toPrecision(3).toString()+"%";
+                        $("body").removeClass('red');
+                    }
+                    ctx.lineWidth = "4"
+                    ctx.rect(start[0], start[1],size[0], size[1])
+                    ctx.stroke()
+                    ctx.font = "bold 15pt sans-serif";
+                    ctx.fillText(text,start[0]+5,start[1]+20)
+                }     
+            }
+            //update frame
+            requestAnimationFrame(renderPrediction);
+            tf.engine().endScope()
+        };
+
+        const setupPage = async () => {
+            await tf.setBackend(state.backend);
+            await setupCamera();
+            video.play();
+
+            videoWidth = video.videoWidth;
+            videoHeight = video.videoHeight;
+            video.width = videoWidth;
+            video.height = videoHeight;
+
+            canvas = document.getElementById('output');
+            canvas.width = videoWidth;
+            canvas.height = videoHeight;
+            ctx = canvas.getContext('2d');
+            ctx.fillStyle = "rgba(255, 0, 0, 0.5)"; 
+
+            model = await blazeface.load();
+            
+            mask_model = await tf.loadLayersModel('./cnn3/model.json');
+
+           renderPrediction();
+        };
+
+        setupPage();
+    </script>
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
+</html>
