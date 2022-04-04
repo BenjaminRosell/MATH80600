@@ -235,19 +235,19 @@
                         //no mask on
                         ctx.strokeStyle="red"
                         ctx.fillStyle = "red";
-                        text = "Pas de Masque: "+(result[1]*100).toPrecision(3).toString()+"%";
+                        text = "Pas de Masque: "+(result[0]*100).toPrecision(3).toString()+"%";
                         $("body").addClass('red');
                     }else if (classPrediction ==1){
                         //mask on
                         ctx.strokeStyle="green"
                         ctx.fillStyle = "green";
-                        text = "Masque: "+(result[0]*100).toPrecision(3).toString()+"%";
+                        text = "Masque: "+(result[1]*100).toPrecision(3).toString()+"%";
                         $("body").removeClass('red');
                     } else {
                         //mask on
                         ctx.strokeStyle="yellow"
                         ctx.fillStyle = "yellow";
-                        text = "Mal mis: "+(result[0]*100).toPrecision(3).toString()+"%";
+                        text = "Mal mis: "+(result[3]*100).toPrecision(3).toString()+"%";
                         $("body").removeClass('red');
                     }
                     ctx.lineWidth = "4"
