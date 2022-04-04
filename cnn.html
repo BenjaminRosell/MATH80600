@@ -226,22 +226,28 @@
                     inputImage=inputImage.slice([parseInt(start[1]),parseInt(start[0]),0],[parseInt(size[1]),parseInt(size[0]),3])
                     inputImage=inputImage.resizeBilinear([256,256]).reshape([1,256,256,3])
                     result=mask_model.predict(inputImage).dataSync()
-                    result= Array.from(result)
-                    console.log(result)
-                    console.log(softmax(result))
+                    result= softmax(Array.from(result))
+
+                    classPrediction = result.indexOf(Math.max.apply(null, result));
                     
                     ctx.beginPath()
-                    if (result[0]>result[1]){
+                    if (classPrediction == 0){
                         //no mask on
                         ctx.strokeStyle="red"
                         ctx.fillStyle = "red";
                         text = "Pas de Masque: "+(result[1]*100).toPrecision(3).toString()+"%";
                         $("body").addClass('red');
-                    }else{
+                    }else if (classPrediction ==1){
                         //mask on
                         ctx.strokeStyle="green"
                         ctx.fillStyle = "green";
                         text = "Masque: "+(result[0]*100).toPrecision(3).toString()+"%";
+                        $("body").removeClass('red');
+                    } else {
+                        //mask on
+                        ctx.strokeStyle="yellow"
+                        ctx.fillStyle = "yellow";
+                        text = "Mal mis: "+(result[0]*100).toPrecision(3).toString()+"%";
                         $("body").removeClass('red');
                     }
                     ctx.lineWidth = "4"
