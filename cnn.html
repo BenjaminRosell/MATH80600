@@ -196,6 +196,12 @@
             });
         }
 
+        function softmax(arr) {
+            return arr.map(function(value,index) { 
+              return Math.exp(value) / arr.map( function(y /*value*/){ return Math.exp(y) } ).reduce( function(a,b){ return a+b })
+            })
+        }
+
         const renderPrediction = async () => {
             tf.engine().startScope()
             ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -220,14 +226,12 @@
                     inputImage=inputImage.slice([parseInt(start[1]),parseInt(start[0]),0],[parseInt(size[1]),parseInt(size[0]),3])
                     inputImage=inputImage.resizeBilinear([256,256]).reshape([1,256,256,3])
                     result=mask_model.predict(inputImage).dataSync()
-                    sigmo = result.sigmoid().print();
                     result= Array.from(result)
-                    sigmo = Array.from(sigmo)
                     console.log(result)
-                    console.log(sigmo)
+                    console.log(softmax(result))
                     
                     ctx.beginPath()
-                    if (result[1]>result[0]){
+                    if (result[0]>result[1]){
                         //no mask on
                         ctx.strokeStyle="red"
                         ctx.fillStyle = "red";
