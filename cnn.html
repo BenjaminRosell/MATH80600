@@ -225,13 +225,12 @@
                     inputImage = inputImage.sub(offset).div(offset);
                     inputImage=inputImage.slice([parseInt(start[1]),parseInt(start[0]),0],[parseInt(size[1]),parseInt(size[0]),3])
                     inputImage=inputImage.resizeBilinear([256,256]).reshape([1,256,256,3])
-                    result=mask_model.predict(inputImage).dataSync()
+                    result=mask_model.predict(inputImage)
+                    console.log(result)
+                    result= result.dataSync()
                     console.log(result)
                     result= softmax(Array.from(result))
-
                     console.log(result)
-                    console.log(result)
-
                     classPrediction = result.indexOf(Math.max.apply(null, result));
                     console.log(classPrediction);
 
