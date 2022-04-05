@@ -228,7 +228,10 @@
                     result=mask_model.predict(inputImage).dataSync()
                     result= softmax(Array.from(result))
 
+                    console.log(result)
+
                     classPrediction = result.indexOf(Math.max.apply(null, result));
+                    console.log(classPrediction);
                     
                     ctx.beginPath()
                     if (classPrediction == 0){
