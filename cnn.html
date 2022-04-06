@@ -226,7 +226,7 @@
                     inputImage=inputImage.slice([parseInt(start[1]),parseInt(start[0]),0],[parseInt(size[1]),parseInt(size[0]),3])
                     inputImage=inputImage.resizeBilinear([256,256]).reshape([1,256,256,3])
                     var result=mask_model.predict(inputImage)
-                    //result= result.dataSync()
+                    result= result.dataSync()
                     result= Array.from(result)
                     classPrediction = result.indexOf(Math.max.apply(null, result));
 
